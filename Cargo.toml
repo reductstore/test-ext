@@ -1,0 +1,13 @@
+[package]
+name = "test_plugin"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["dylib", "rlib"]
+
+[dependencies]
+reduct-base = { git = "https://github.com/reductstore/reductstore.git", branch = "RS-606-plugin-experements" }
+
+[build]
+rustflags = ["-C", "prefer-dynamic", "-C", "rpath"]
