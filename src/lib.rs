@@ -3,12 +3,11 @@ use async_trait::async_trait;
 use reduct_base::error::ReductError;
 use reduct_base::ext::{BoxedReadRecord, IoExtension, IoExtensionInfo, ProcessStatus};
 use reduct_base::msg::entry_api::QueryEntry;
-use log::info;
 use reduct_base::io::{ReadChunk, ReadRecord, RecordMeta};
 use reduct_base::Labels;
 
 #[no_mangle]
-pub fn get_plugin() -> *mut dyn IoExtension {
+pub fn get_ext() -> *mut (dyn IoExtension  + Send + Sync) {
     // Return a raw pointer to an instance of our plugin
     Box::into_raw(Box::new(TestExtension::new()))
 }
@@ -21,7 +20,7 @@ impl TestExtension {
     fn new() -> Self {
         Self {
             info: IoExtensionInfo::builder()
-                .name("text-ext".to_string())
+                .name("test-ext".to_string())
                 .version("0.1".to_string())
                 .build(),
         }
@@ -35,18 +34,16 @@ impl IoExtension for TestExtension {
 
     fn register_query(
         &self,
-        query_id: u64,
-        bucket_name: &str,
-        entry_name: &str,
-        query: &QueryEntry,
+    _query_id: u64,
+        _bucket_name: &str,
+    _entry_name: &str,
+    _query: &QueryEntry,
     ) -> Result<(), ReductError> {
-        info!("Register query {} for Mock plugin", query_id);
         Ok(())
     }
 
-    fn next_processed_record(&self, query_id: u64, reader: BoxedReadRecord) -> ProcessStatus {
-
-        let mut labels = reader.labels().clone();
+    fn next_processed_record(&self, _query_id: u64, reader: BoxedReadRecord) -> ProcessStatus {
+        let labels = reader.labels().clone();
         let wrapper = Wrapper {
             reader,
             labels,
