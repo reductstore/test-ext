@@ -1,13 +1,13 @@
-use std::time::Duration;
 use async_trait::async_trait;
 use reduct_base::error::ReductError;
 use reduct_base::ext::{BoxedReadRecord, IoExtension, IoExtensionInfo, ProcessStatus};
-use reduct_base::msg::entry_api::QueryEntry;
 use reduct_base::io::{ReadChunk, ReadRecord, RecordMeta};
+use reduct_base::msg::entry_api::QueryEntry;
 use reduct_base::Labels;
+use std::time::Duration;
 
 #[no_mangle]
-pub fn get_ext() -> *mut (dyn IoExtension  + Send + Sync) {
+pub fn get_ext() -> *mut (dyn IoExtension + Send + Sync) {
     // Return a raw pointer to an instance of our plugin
     Box::into_raw(Box::new(TestExtension::new()))
 }
@@ -34,10 +34,10 @@ impl IoExtension for TestExtension {
 
     fn register_query(
         &self,
-    _query_id: u64,
+        _query_id: u64,
         _bucket_name: &str,
-    _entry_name: &str,
-    _query: &QueryEntry,
+        _entry_name: &str,
+        _query: &QueryEntry,
     ) -> Result<(), ReductError> {
         Ok(())
     }
