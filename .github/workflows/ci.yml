@@ -56,12 +56,15 @@ jobs:
           - target: "x86_64-unknown-linux-gnu"
             os: ubuntu-24.04
             compiler: "gcc"
+            artifact: "libtest_ext.so"
           - target: "x86_64-pc-windows-gnu"
             os: ubuntu-24.04
             compiler: "gcc-mingw-w64-x86-64"
+            artifact: "test_ext.dll"
           - target: "x86_64-apple-darwin"
             os: macos-13
             compiler: "gcc"
+            artifact: "libtest_ext.so"
 
 
     steps:
@@ -91,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: extension-${{ matrix.target }}
-          path: target/${{matrix.target}}/release/libtest_ext{{ matrix.target == 'x86_64-pc-windows-gnu' && '.dll' || '.so' }}
+          path: target/${{matrix.target}}/release/${{ matrix.artifact }}
 
 
   make_release:
