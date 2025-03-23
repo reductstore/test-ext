@@ -8,7 +8,6 @@ crate-type = ["dylib", "rlib"]
 
 [dependencies]
 reduct-base = { git = "https://github.com/reductstore/reductstore.git", branch = "RS-614-extension-impl", features = ["ext"] }
-log = "0.4.26"
 async-trait = "0.1.88"
 
 [build]

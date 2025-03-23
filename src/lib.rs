@@ -20,8 +20,8 @@ impl TestExtension {
     fn new() -> Self {
         Self {
             info: IoExtensionInfo::builder()
-                .name("test-ext".to_string())
-                .version("0.1".to_string())
+                .name("test-ext")
+                .version(env!("CARGO_PKG_VERSION"))
                 .build(),
         }
     }
