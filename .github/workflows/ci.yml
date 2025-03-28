@@ -64,10 +64,11 @@ jobs:
           - target: "x86_64-apple-darwin"
             os: macos-13
             compiler: "gcc"
-            artifact: "libtest_ext.so"
+            artifact: "libtest_ext.dylib"
 
 
     steps:
+      - uses: actions/checkout@v4
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
