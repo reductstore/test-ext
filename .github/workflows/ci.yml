@@ -37,11 +37,10 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           cargo install cargo-get
-          for PKG_NAME in reduct_base reduct_macros reductstore; do
-            if [ "v$(cargo get package.version --entry $PKG_NAME/)" != "${GITHUB_REF#refs/*/}" ]; then
-              echo "Tag does not match version in $PKG_NAME/Cargo.toml"
-              exit 1
-            fi
+          if [ "v$(cargo get package.version)" != "${GITHUB_REF#refs/*/}" ]; then
+            echo "Tag does not match version in $PKG_NAME/Cargo.toml"
+            exit 1
+          fi
           done
           
   build_binaries:
