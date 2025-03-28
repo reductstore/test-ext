@@ -41,7 +41,6 @@ jobs:
             echo "Tag does not match version in $PKG_NAME/Cargo.toml"
             exit 1
           fi
-          done
           
   build_binaries:
     name: Build Binaries
