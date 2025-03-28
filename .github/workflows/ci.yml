@@ -146,8 +146,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /tmp/libtext_ext.so
-          asset_name: libtext_ext-x86_64-apple-darwin.so
+          asset_path: /tmp/libtext_ext.dylib
+          asset_name: libtext_ext-x86_64-apple-darwin.dylib
           asset_content_type: application/x-sharedlib
 
       - name: Download Windows artifact
