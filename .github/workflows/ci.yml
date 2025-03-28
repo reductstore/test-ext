@@ -128,8 +128,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /tmp/libtext_ext.so
-          asset_name: libtext_ext-x86_64-unknown-linux-gnu.so
+          asset_path: /tmp/libtest_ext.so
+          asset_name: libtest_ext-x86_64-unknown-linux-gnu.so
           asset_content_type: application/x-sharedlib
 
       - name: Download Macos artifact
@@ -144,8 +144,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /tmp/libtext_ext.dylib
-          asset_name: libtext_ext-x86_64-apple-darwin.dylib
+          asset_path: /tmp/libtest_ext.dylib
+          asset_name: libtest_ext-x86_64-apple-darwin.dylib
           asset_content_type: application/x-sharedlib
 
       - name: Download Windows artifact
@@ -160,6 +160,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /tmp/libtext_ext.dll
-          asset_name: libtext_ext-x86_64-pc-windows-gnu.dll
+          asset_path: /tmp/libtest_ext.dll
+          asset_name: libtest_ext-x86_64-pc-windows-gnu.dll
           asset_content_type: application/x-sharedlib
