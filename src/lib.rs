@@ -1,14 +1,18 @@
 use async_trait::async_trait;
+use log::info;
 use reduct_base::error::ReductError;
-use reduct_base::ext::{BoxedReadRecord, IoExtension, IoExtensionInfo, ProcessStatus};
+use reduct_base::ext::{BoxedReadRecord, ExtSettings, IoExtension, IoExtensionInfo, ProcessStatus};
 use reduct_base::io::{ReadChunk, ReadRecord, RecordMeta};
+use reduct_base::logger::Logger;
 use reduct_base::msg::entry_api::QueryEntry;
 use reduct_base::Labels;
 use std::time::Duration;
 
 #[no_mangle]
-pub fn get_ext() -> *mut (dyn IoExtension + Send + Sync) {
+pub fn get_ext(settings: ExtSettings) -> *mut (dyn IoExtension + Send + Sync) {
     // Return a raw pointer to an instance of our plugin
+    Logger::init(settings.log_level());
+    info!("Init");
     Box::into_raw(Box::new(TestExtension::new()))
 }
 
@@ -27,30 +31,32 @@ impl TestExtension {
     }
 }
 
+#[async_trait]
 impl IoExtension for TestExtension {
     fn info(&self) -> &IoExtensionInfo {
         &self.info
     }
 
     fn register_query(
-        &self,
-        _query_id: u64,
-        _bucket_name: &str,
-        _entry_name: &str,
-        _query: &QueryEntry,
+        &mut self,
+        query_id: u64,
+        bucket_name: &str,
+        entry_name: &str,
+        query: &QueryEntry,
     ) -> Result<(), ReductError> {
         Ok(())
     }
 
-    fn next_processed_record(&self, _query_id: u64, reader: BoxedReadRecord) -> ProcessStatus {
-        let labels = reader.labels().clone();
-        let wrapper = Wrapper {
-            reader,
-            labels,
-            computed_labels: Labels::from_iter(vec![("ext_label".to_string(), "true".to_string())]),
-        };
+    fn unregister_query(&mut self, query_id: u64) -> Result<(), ReductError> {
+        Ok(())
+    }
 
-        ProcessStatus::Ready(Ok(Box::new(wrapper)))
+    async fn next_processed_record(
+        &mut self,
+        query_id: u64,
+        record: BoxedReadRecord,
+    ) -> ProcessStatus {
+        ProcessStatus::Stop
     }
 }
 
