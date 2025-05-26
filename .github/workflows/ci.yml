@@ -70,13 +70,12 @@ jobs:
             artifact: "test_ext.dll"
           - target: "x86_64-apple-darwin"
             os: macos-14
-            compiler: "aarch64-apple-darwin"
+            compiler: "gcc-x86_64-apple-darwin"
             artifact: "libtest_ext.dylib"
           - target: "aarch64-apple-darwin"
             os: macos-14
             compiler: "gcc"
             artifact: "libtest_ext.dylib"
-
 
     steps:
       - uses: actions/checkout@v4
@@ -148,7 +147,7 @@ jobs:
       - name: Download Macos artifact
         uses: actions/download-artifact@v4
         with:
-          name: extension-x86_64-apple-darwin
+          name: extension-aarch64-apple-darwin
           path: /tmp/
 
       - name: Upload MacOs artifact
@@ -158,7 +157,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: /tmp/libtest_ext.dylib
-          asset_name: libtest_ext-arch64-apple-darwin.dylib
+          asset_name: libtest_ext-aarch64-apple-darwin.dylib
           asset_content_type: application/x-sharedlib
 
       - name: Download Windows artifact
