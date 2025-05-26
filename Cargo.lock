@@ -700,7 +700,7 @@ dependencies = [
 
 [[package]]
 name = "test-ext"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "async-stream",
  "async-trait",
