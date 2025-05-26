@@ -62,7 +62,7 @@ jobs:
             artifact: "libtest_ext.so"
           - target: "aarch64-unknown-linux-gnu"
             os: ubuntu-24.04
-            compiler: "aarch64-unknown-linux-gnu"
+            compiler: "gcc-aarch64-linux-gnu"
             artifact: "libtest_ext.so"
           - target: "x86_64-pc-windows-gnu"
             os: ubuntu-24.04
