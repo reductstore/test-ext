@@ -2,7 +2,10 @@ use async_stream::stream;
 use async_trait::async_trait;
 use log::info;
 use reduct_base::error::ReductError;
-use reduct_base::ext::{BoxedCommiter, BoxedProcessor, BoxedReadRecord, BoxedRecordStream, Commiter, ExtSettings, IoExtension, IoExtensionInfo, Processor};
+use reduct_base::ext::{
+    BoxedCommiter, BoxedProcessor, BoxedReadRecord, BoxedRecordStream, Commiter, ExtSettings,
+    IoExtension, IoExtensionInfo, Processor,
+};
 use reduct_base::logger::Logger;
 use reduct_base::msg::entry_api::QueryEntry;
 
@@ -57,12 +60,14 @@ impl IoExtension for TestExtension {
             }
         }
 
-
         struct DummyCommiter;
 
         #[async_trait]
         impl Commiter for DummyCommiter {
-            async fn commit_record(&mut self, record: BoxedReadRecord) -> Option<Result<BoxedReadRecord, ReductError>> {
+            async fn commit_record(
+                &mut self,
+                record: BoxedReadRecord,
+            ) -> Option<Result<BoxedReadRecord, ReductError>> {
                 Some(Ok(record))
             }
 
@@ -70,8 +75,7 @@ impl IoExtension for TestExtension {
                 None
             }
         }
-        
-        
+
         Ok((
             Box::new(DummyProcessor) as BoxedProcessor,
             Box::new(DummyCommiter) as BoxedCommiter,
