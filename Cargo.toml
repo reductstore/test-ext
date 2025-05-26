@@ -7,8 +7,10 @@ edition = "2021"
 crate-type = ["dylib", "rlib"]
 
 [dependencies]
-reduct-base = { git = "https://github.com/reductstore/reductstore.git", branch = "RS-646-enable-logging-in-ext" , features = ["ext"] }
+reduct-base = { git = "https://github.com/reductstore/reductstore.git", branch = "main" , features = ["ext", "io"] }
+tokio = { version = "1.45.0", features = ["sync"] }
 async-trait = "0.1.88"
 log = "0.4.27"
+async-stream = "0.3.6"
 
 [build]

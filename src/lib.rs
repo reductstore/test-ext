@@ -1,12 +1,10 @@
+use async_stream::stream;
 use async_trait::async_trait;
 use log::info;
 use reduct_base::error::ReductError;
-use reduct_base::ext::{BoxedReadRecord, ExtSettings, IoExtension, IoExtensionInfo, ProcessStatus};
-use reduct_base::io::{ReadChunk, ReadRecord, RecordMeta};
+use reduct_base::ext::{BoxedCommiter, BoxedProcessor, BoxedReadRecord, BoxedRecordStream, Commiter, ExtSettings, IoExtension, IoExtensionInfo, Processor};
 use reduct_base::logger::Logger;
 use reduct_base::msg::entry_api::QueryEntry;
-use reduct_base::Labels;
-use std::time::Duration;
 
 #[no_mangle]
 pub fn get_ext(settings: ExtSettings) -> *mut (dyn IoExtension + Send + Sync) {
@@ -37,75 +35,46 @@ impl IoExtension for TestExtension {
         &self.info
     }
 
-    fn register_query(
+    fn query(
         &mut self,
-        query_id: u64,
-        bucket_name: &str,
-        entry_name: &str,
-        query: &QueryEntry,
-    ) -> Result<(), ReductError> {
-        Ok(())
-    }
+        _bucket_name: &str,
+        _entry_name: &str,
+        _query: &QueryEntry,
+    ) -> Result<(BoxedProcessor, BoxedCommiter), ReductError> {
+        struct DummyProcessor;
 
-    fn unregister_query(&mut self, query_id: u64) -> Result<(), ReductError> {
-        Ok(())
-    }
+        #[async_trait]
+        impl Processor for DummyProcessor {
+            async fn process_record(
+                &mut self,
+                record: BoxedReadRecord,
+            ) -> Result<BoxedRecordStream, ReductError> {
+                let stream = stream! {
+                    yield Ok(record);
+                };
 
-    async fn next_processed_record(
-        &mut self,
-        query_id: u64,
-        record: BoxedReadRecord,
-    ) -> ProcessStatus {
-        ProcessStatus::Stop
-    }
-}
+                Ok(Box::new(stream))
+            }
+        }
 
-struct Wrapper {
-    reader: BoxedReadRecord,
-    labels: Labels,
-    computed_labels: Labels,
-}
 
-impl RecordMeta for Wrapper {
-    fn timestamp(&self) -> u64 {
-        self.reader.timestamp()
-    }
+        struct DummyCommiter;
 
-    fn labels(&self) -> &Labels {
-        &self.labels
-    }
-}
+        #[async_trait]
+        impl Commiter for DummyCommiter {
+            async fn commit_record(&mut self, record: BoxedReadRecord) -> Option<Result<BoxedReadRecord, ReductError>> {
+                Some(Ok(record))
+            }
 
-#[async_trait]
-impl ReadRecord for Wrapper {
-    async fn read(&mut self) -> ReadChunk {
-        self.reader.read().await
-    }
-
-    async fn read_timeout(&mut self, timeout: Duration) -> ReadChunk {
-        self.reader.read_timeout(timeout).await
-    }
-
-    fn blocking_read(&mut self) -> ReadChunk {
-        self.reader.blocking_read()
-    }
-
-    fn last(&self) -> bool {
-        self.reader.last()
-    }
-    fn computed_labels(&self) -> &Labels {
-        &self.computed_labels
-    }
-
-    fn computed_labels_mut(&mut self) -> &mut Labels {
-        &mut self.computed_labels
-    }
-
-    fn content_length(&self) -> u64 {
-        self.reader.content_length()
-    }
-
-    fn content_type(&self) -> &str {
-        self.reader.content_type()
+            async fn flush(&mut self) -> Option<Result<BoxedReadRecord, ReductError>> {
+                None
+            }
+        }
+        
+        
+        Ok((
+            Box::new(DummyProcessor) as BoxedProcessor,
+            Box::new(DummyCommiter) as BoxedCommiter,
+        ))
     }
 }
