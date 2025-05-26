@@ -158,7 +158,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: /tmp/libtest_ext.dylib
-          asset_name: libtest_ext-x86_64-apple-darwin.dylib
+          asset_name: libtest_ext-arch64-apple-darwin.dylib
           asset_content_type: application/x-sharedlib
 
       - name: Download Windows artifact
